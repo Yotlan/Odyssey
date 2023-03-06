@@ -131,6 +131,7 @@ class generateStatistics {
                 String p = r.substring(0, i);
                 int j = r.lastIndexOf('.');
                 o = r.substring(i+1, j);
+                //System.out.println("s: "+s+"; p: "+p+"; o: "+o);
 
                 if ((pe != null) && (!pe.equals(s))) {
                     ikey = key.hashCode();
@@ -196,7 +197,7 @@ class generateStatistics {
                     }
                     // update links from other entities to this entity
                     HashMap<String, HashMap<Integer,Integer>> psCsCount = invertIndexObject.get(pe);
-                    //System.out.println("is "+pe+" the object of some entity?\n"+invertIndexObject+"\n"+psCss);
+                    //System.out.println("is "+pe+" the object of some entity?\n"+invertIndexObject+"\n"+psCsCount);
                     if (psCsCount != null) {
                         for (String pAux : psCsCount.keySet()) {
                             for (Integer aux : psCsCount.get(pAux).keySet()) {
@@ -347,10 +348,10 @@ class generateStatistics {
             }
             updateNO(csPsOs, css);
             write(css, cps, invertIndexSubject, invertIndexObject, base);
-            //System.out.println(css);
-            //System.out.println(cps);
-            //System.out.println(invertIndexSubject);
-            //System.out.println(invertIndexObject);
+            //System.out.println("css: "+css);
+            //System.out.println("cps: "+cps);
+            //System.out.println("invertIndexSubject: "+invertIndexSubject);
+            //System.out.println("invertIndexObject: "+invertIndexObject);
         } catch (IOException e) {
             System.err.println("Problems reading file: "+fileName);
             System.exit(1);

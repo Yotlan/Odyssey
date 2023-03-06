@@ -1,0 +1,7 @@
+lib/
+code/*.class
+proxy/*.class
+fedbench/
+bin/*.class
+results/
+federation/

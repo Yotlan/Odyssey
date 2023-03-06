@@ -13,7 +13,9 @@ class changeCPS {
     }
 
     public static HashMap<String, HashMap<Integer, HashMap<Integer, Integer>>> convert(HashMap<Integer, HashMap<Integer, HashMap<String, Integer>>> cps) {
+        //System.out.println(cps);
         HashMap<String, HashMap<Integer, HashMap<Integer, Integer>>> res = new  HashMap<String, HashMap<Integer, HashMap<Integer, Integer>>>();
+        //System.out.println(cps.keySet());
         for (Integer cs1 : cps.keySet()) {
             HashMap<Integer, HashMap<String, Integer>> cs2psCount = cps.get(cs1);
             for (Integer cs2 : cs2psCount.keySet()) {

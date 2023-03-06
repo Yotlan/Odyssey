@@ -17,8 +17,8 @@ class obtainRadixOneBasedIndex {
         //HashMap<Integer, HashMap<String, TreeSet<String>>> iio = readIO(fileIO1);
         HashMap<String, Integer> iis = obtainLightIndex.readIIS(fileIIS1);
         HashMap<String, HashMap<String, HashMap<Integer,Integer>>> iio = obtainLightIndex.readIIO(fileIIO1);
-        //System.out.println(iis1);
-        //System.out.println(iio1);
+        //System.out.println(iis);
+        //System.out.println(iio);
         RadixTreeOne rt = new RadixTreeOne("/", tmax, bmax, fmax, th);
         //try {
         processSubjectIndex(iis, rt, tmax, bmax, fmax);

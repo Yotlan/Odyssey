@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.graph.Triple;
 import com.hp.hpl.jena.graph.Node;
@@ -47,6 +48,7 @@ class evaluateSPARQLQuery {
     static List<Var> projectedVariables;
     static boolean includeMultiplicity;
     static boolean original;
+    static Map<String, HashSet<String>> ODYSSEY_SS = new LinkedHashMap<>();
 
     public static HashMap<Integer, Integer> getCostSubj(Integer ds) {
         Integer pos = datasetsIdPosSubj.get(ds);
@@ -204,7 +206,8 @@ class evaluateSPARQLQuery {
     public static Vector<String> readDatasets(String file) {
         Vector<String> ps = new Vector<String>();
         try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
             String l = br.readLine();
             while (l!=null) {
                 StringTokenizer st = new StringTokenizer(l);
@@ -213,6 +216,9 @@ class evaluateSPARQLQuery {
                 l = br.readLine();
             }
             br.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + file);
+            System.exit(1);
         } catch (IOException e) {
             System.err.println("Problems reading file: "+file);
             System.exit(1);
@@ -241,8 +247,8 @@ class evaluateSPARQLQuery {
             Config.initialize(fedXConfigFile);
             List<Endpoint> ep = EndpointFactory.loadFederationMembers(new File(fedXDescriptionFile));
             FedXFactory.initializeFederation(ep);
-            System.out.println("fedXConfigFile: "+fedXConfigFile);
-            System.out.println("fedXDescriptionFile: "+fedXDescriptionFile);
+            //System.out.println("fedXConfigFile: "+fedXConfigFile);
+            //System.out.println("fedXDescriptionFile: "+fedXDescriptionFile);
         } catch (Exception e) {
             e.printStackTrace(); 
         }
@@ -273,12 +279,35 @@ class evaluateSPARQLQuery {
         projectedVariables = query.getProjectVars();
         // sub-query --> <order, <cardinality,cost>>
         long t1 = System.currentTimeMillis();
-        System.out.println("loading: "+(t1-t0));
+        //System.out.println("loading: "+(t1-t0));
         long t2 = System.currentTimeMillis();
         for (HashSet<Triple> triples : bgps) {
             HashSet<Triple> ts = new HashSet<Triple>(triples);
             boolean vars = false;
             for (Triple t : triples) {
+                String str = "";
+                Node s = t.getSubject();
+                if (s.isURI()) {
+                    str += "<"+s.getURI()+"> ";
+                } else {
+                    str += s.toString()+" ";
+                }
+                Node p = t.getPredicate();
+                if (p.isURI()) {
+                    str += "<"+p.getURI()+"> ";
+                } else {
+                    str += p.toString()+" ";
+                }
+                Node o = t.getObject();
+                if (o.isURI()) {
+                    str += "<"+o.getURI()+">";
+                } else {
+                    str += o.toString();
+                }
+                if (!ODYSSEY_SS.containsKey(str)) {
+                    HashSet<String> sources = new HashSet<>();
+                    ODYSSEY_SS.put(str, sources);
+                }
                 if (t.getPredicate().isVariable()) {
                     vars = true;
                     break;
@@ -328,22 +357,31 @@ class evaluateSPARQLQuery {
             }
         }
         t2 = System.currentTimeMillis() - t2;
-        System.out.println("planning="+t2+"ms");
+        //System.out.println("planning="+t2+"ms");
         Query newQuery = produceQueryWithServiceClauses(query, plans);
         if (newQuery != null) {
             Op op = (new AlgebraGenerator()).compile(newQuery);
             VisitorCountTriples vct = new VisitorCountTriples();
             OpWalker.walk(op, vct);
             int c = vct.getCount();
-            System.out.println("NumberSelectedSources="+c);
+            //System.out.println("NumberSelectedSources="+c);
             VisitorCountServices vcs = new VisitorCountServices();
             OpWalker.walk(op, vcs);
             c = vcs.getCount();
-            System.out.println("NumberServices="+c);
-            System.out.println("Plan: "+newQuery);
-            evaluate(newQuery.toString(), queryId, false);
+            //System.out.println("NumberServices="+c);
+            //System.out.println("ODYSSEY_SS="+ODYSSEY_SS);
+            System.out.println("triples;sources");
+            for (Map.Entry<String, HashSet<String>> entry : ODYSSEY_SS.entrySet()) {
+                System.out.print(entry.getKey());
+                System.out.print(";");
+                System.out.print(String.join(",", entry.getValue()));
+                System.out.println("");
+            }
+            //System.out.println("Query="+newQuery.toString());
+            //System.out.println("Plan: "+newQuery);
+            //evaluate(newQuery.toString(), queryId, false);
         } else {
-            evaluate(query.toString(), queryId, true);
+            //evaluate(query.toString(), queryId, true);
         }
         FederationManager.getInstance().shutDown();
         System.exit(0);
@@ -376,6 +414,11 @@ class evaluateSPARQLQuery {
 
         Op op = (new AlgebraGenerator()).compile(query);
         TransformerDeleteFilters t0 = new TransformerDeleteFilters();
+        Vector<Tree<Pair<Integer,Triple>>> plansValue =  (Vector<Tree<Pair<Integer,Triple>>>)plans.values().toArray()[0];
+        for (Tree<Pair<Integer,Triple>> services: plansValue) {
+            treeToString(services);
+        }
+        //System.out.println(plans.values());
         Op opBase = Transformer.transform(t0, op);
         ExprList el = t0.getFilters();
         Transform t = new TransformInOneDotOneSPARQL(plans, el, endpoints);
@@ -463,6 +506,21 @@ class evaluateSPARQLQuery {
         if (sameSource(elems) != null) {
             str = tripleTreeToString(tree);
             String source = endpoints.get(elems.iterator().next().getFirst());
+            for (String key : ODYSSEY_SS.keySet()) {
+                if (str.contains(key)) {
+                    HashSet<String> sources = ODYSSEY_SS.get(key);
+                    sources.add(source);
+                    ODYSSEY_SS.merge(key, sources, (s1, s2) -> { 
+                        if (s1.equals(s2)) {
+                            return s1;
+                        } else {
+                            HashSet<String> mergeResult = new HashSet<>(s1);
+                            mergeResult.addAll(s2);
+                            return mergeResult;
+                        }
+                    });
+                }
+            }
             str = "SERVICE <"+source+"> { "+str+" } .";
         } else {
             Branch<Pair<Integer, Triple>> b = (Branch<Pair<Integer, Triple>>) tree;

@@ -1,6 +1,7 @@
 import java.util.*;
 import java.io.*;
 
+@SuppressWarnings({"removal", "deprecated"})
 class addInterDatasetLinksMIPs {
 
     public static void main(String[] args) {

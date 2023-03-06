@@ -6,6 +6,7 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.sparql.core.Var;
 
+@SuppressWarnings({"removal", "deprecated"})
 class testSameAs2 {
 
     public static void main(String[] args) throws Exception {

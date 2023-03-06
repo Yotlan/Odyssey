@@ -1,3 +1,5 @@
+
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -89,14 +91,16 @@ public class SingleEndpointProxy2 extends Thread {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         try {
             this.connectedClient = ss.accept();
-            //System.out.println("serversocket constructor with parameters: "+this.proxyPort+" and "+this.endpointAddress);
+            //
+	    //System.out.println("serversocket constructor with parameters: "+this.proxyPort+" and "+this.endpointAddress);
             //this.connectedClient = new ServerSocket (this.proxyPort, 5, InetAddress.getByName(this.endpointAddress)).accept();
             //System.out.println("httpconnection constructor with parameters: "+this.endpointAddress+" and "+this.endpointPort);
-            //uri = new URIBuilder().setScheme("http").setHost(this.endpointAddress).setPath("/sparql").setPort(this.endpointPort);
+            //uri = new URIBuilder().setScheme("http").setHost(this.endpointAddress).setPath("sparql").setPort(this.endpointPort);
             //System.out.println("httpconnection created");
-            ////System.out.println( "Client " + cc.getInetAddress() 
-            ////                 + ":" + cc.getPort() + " is connected");
-            increaseNC();
+            //System.out.println( "Client " + cc.getInetAddress() 
+            //                 + ":" + cc.getPort() + " is connected");
+            //
+	    increaseNC();
             inFromClient = new BufferedReader(
                                       new InputStreamReader(
                                       this.connectedClient.getInputStream()));
@@ -105,20 +109,20 @@ public class SingleEndpointProxy2 extends Thread {
                 Thread.sleep(1);
             }
             String requestString = inFromClient.readLine();
-            //System.out.println("requestString: "+requestString);
+            System.out.println("requestString: "+requestString);
             String headerLine = requestString;
             StringTokenizer tokenizer = new StringTokenizer(headerLine);
             String httpMethod = tokenizer.nextToken();
             String httpQueryString = tokenizer.nextToken();
 
-            //System.out.println("method: "+httpMethod);
+            System.out.println("method: "+httpMethod);
  
             HashMap<String, String> map = new HashMap<String, String>();
             String postQuery = read(inFromClient, map);
             //inFromClient.close();
             System.out.println("postQuery: "+postQuery);
                     //httpQueryString = httpQueryString.substring(6);
-            URIBuilder uriB = new URIBuilder().setScheme("http").setHost(this.endpointAddress).setPort(this.endpointPort);
+            URIBuilder uriB = new URIBuilder().setScheme("http").setHost(this.endpointAddress).setPath("/sparql").setPort(this.endpointPort);
             setParameters(uriB, httpQueryString);
             if (this.graph != null) {
                 uriB.setParameter("default-graph-uri", this.graph);
@@ -126,14 +130,18 @@ public class SingleEndpointProxy2 extends Thread {
             if (httpMethod.equals("GET")) {
                 URI uri = uriB.build();
                 HttpGet httpGet = new HttpGet(uri);
+                
                 addHeaders(httpGet, map);
-                //System.out.println(httpGet.getURI());
+                System.out.println("URI:"+httpGet.getURI());
+                System.out.println("sending query post:");
                 rsp = httpclient.execute(httpGet);
             } else if (httpMethod.equals("POST")) {
                 uriB.setParameter("query", java.net.URLDecoder.decode(postQuery, "UTF-8"));
                 URI uri = uriB.build();
                 HttpPost httpPost = new HttpPost(uri);
+                //httpPost.setHeader("Content-Type","json");
                 addHeaders(httpPost, map);    
+                System.out.println("sending query post:");                
                 rsp = httpclient.execute(httpPost);
             } else {	
                 sendResponse(404, "<b>The Requested resource not found ....", outToClient);
@@ -148,7 +156,7 @@ public class SingleEndpointProxy2 extends Thread {
             e.printStackTrace();
         }
         //System.out.println("Connection closed!");
-        //System.out.println("Se han enviado "+nr+" resultados hasta ahora");
+        System.out.println("Se han enviado "+nr+" resultados hasta ahora");
         //System.out.println("Se han hecho "+nc+" contactos a esta fuente hasta ahora");
       }
     }
@@ -158,7 +166,9 @@ public class SingleEndpointProxy2 extends Thread {
         for (String variable : map.keySet()) {
             String value = map.get(variable);
             message.addHeader(variable, value);
+            
         }
+       // message.addHeader("Content-Type","application/json");
     }
 
     public String read (BufferedReader inFromClient, HashMap<String, String> map) throws Exception {
@@ -320,17 +330,41 @@ public class SingleEndpointProxy2 extends Thread {
     }
 // sep: for anapsid \r\n for fedX \n
     public void  write(HttpResponse r, DataOutputStream outToClient, String sep) throws Exception {
+	System.out.println("writing response");
         r.removeHeaders("Connection");
         r.addHeader("Connection", "close"); 
+        
         boolean isChunked = (r.getFirstHeader("Transfer-Encoding") != null) && r.getFirstHeader("Transfer-Encoding").getValue().equalsIgnoreCase("chunked");
         boolean isXML = r.getFirstHeader("Content-Type").getValue().indexOf("xml")>=0;
         boolean isJSON = r.getFirstHeader("Content-Type").getValue().indexOf("json")>=0;
+        boolean isText = r.getFirstHeader("Content-Type").getValue().indexOf("text")>=0;
+	boolean isSPARQLXML = r.getFirstHeader("Content-Type").getValue().indexOf("SPARQL/XML")>=0;
+	boolean isSPARQLJSON = r.getFirstHeader("Content-Type").getValue().indexOf("SPARQL/JSON")>=0;
+        if(isText)
+        {
+        	r.removeHeaders("Content-Type");
+        	r.addHeader("Content-Type","text/boolean; charset=US-ASCII");
+
+        }
+	if(isSPARQLXML)
+        {
+        	r.removeHeaders("Content-Type");
+        	r.addHeader("Content-Type","application/sparql-results+xml");
+
+        }
+	if(isSPARQLJSON)
+        {
+        	r.removeHeaders("Content-Type");
+        	r.addHeader("Content-Type","application/sparql-results+json");
+
+        }
 
         HeaderIterator it = r.headerIterator();
         outToClient.writeBytes(r.getStatusLine().toString()+"\r\n");
         while (it.hasNext()) {
             Header h = it.nextHeader();
             outToClient.writeBytes(h.toString()+"\r\n");
+            
         }
         outToClient.writeBytes(sep);
 
@@ -341,7 +375,7 @@ public class SingleEndpointProxy2 extends Thread {
         int m = 0;
         byte[] data = new byte[4096];
         while ((m = bis.read(data)) != -1) {
-            //System.out.println(m+" bytes read");
+            System.out.println(m+" bytes read");
             if (isChunked) {
                 outToClient.writeBytes(Integer.toHexString(m)+"\r\n");
             }
@@ -349,14 +383,16 @@ public class SingleEndpointProxy2 extends Thread {
             if (isChunked) {
                 outToClient.writeBytes("\r\n");
             }
-            //System.out.println(m+" bytes written");
+            System.out.println(m+" bytes written");
             String s = cache+(new String(data, 0, m));
             //System.out.println("s:\n"+s);
             if (isJSON) {
                  cache = countTuplesJSON(s);
             } else if (isXML) {
                  cache = countTuplesXML(s);
-            }
+            }else if (isText)
+            	increaseNR(1);
+            	
             //System.out.println("cache: "+cache);
         }
         if (isChunked) {
@@ -478,4 +514,3 @@ public class SingleEndpointProxy2 extends Thread {
         (new SingleEndpointProxy2(endpointAddress, endpointPort, proxyAddress, proxyPort, graph)).start();
     }
 }
-

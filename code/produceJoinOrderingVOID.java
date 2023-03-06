@@ -14,6 +14,7 @@ import com.hp.hpl.jena.graph.Node;
 import com.hp.hpl.jena.graph.NodeFactory;
 import com.hp.hpl.jena.sparql.core.Var;
 
+@SuppressWarnings({"removal", "deprecated"})
 class produceJoinOrderingVOID {
 
     static Vector<String> datasets = new Vector<String>();

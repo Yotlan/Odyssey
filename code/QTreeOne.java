@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.io.Serializable;
 import java.util.Random;
 
+@SuppressWarnings({"removal", "deprecated"})
 class QTreeOne implements Serializable {
 
     private int bmax;

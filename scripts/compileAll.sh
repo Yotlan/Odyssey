@@ -1,9 +1,9 @@
 . ./configFile
 
 cd ${federatedOptimizerPath}/code
-rm *.class
+rm -rf *.class || true
 javac -cp .:${JENA_HOME}/lib/*:${fedXPath}/lib/* *.java
 
 cd ${federatedOptimizerPath}/proxy
-rm *.class
+rm -rf *.class || true
 javac -cp .:${httpcomponentsClientPath}/lib/* SingleEndpointProxy2.java

@@ -2,8 +2,8 @@
 
 . ./configFile
 
-finished="ChEBI KEGG Drugbank Jamendo NYTimes SWDF LMDB"
-toDo="DBpedia Geonames"
+finished=""
+toDo=`ls ${federatedOptimizerPath}/fedbench | awk -e '$0 ~ /^(vendor|ratingsite)[0-9]+_void.n3$/ {print}' | cut -d'_' -f 1`
 cd ${federatedOptimizerPath}/code
 for d in ${toDo}; do
     for e in ${finished}; do

@@ -4,7 +4,7 @@
 
 finished=""
 
-toDo="ChEBI KEGG Drugbank Geonames DBpedia Jamendo NYTimes SWDF LMDB"
+toDo=`ls ${federatedOptimizerPath}/fedbench | awk -e '$0 ~ /^(vendor|ratingsite)[0-9]+_void.n3$/ {print}' | cut -d'_' -f 1`
 folder=${fedBenchDataPath}
 
 cd ${federatedOptimizerPath}/code

@@ -1,6 +1,7 @@
 import java.util.TreeSet;
 import java.util.HashSet;
 
+@SuppressWarnings({"removal", "deprecated"})
 class QTreeLeaf extends QTreeNode {
     HashSet<Short> values;
     public QTreeLeaf(QTreeNode p, int n) {

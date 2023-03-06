@@ -16,7 +16,7 @@ def main(argv):
                     val = e[var][u'value']
                     f[var] = val
                 f = OrderedDict(sorted(f.items(), key=lambda t: t[0]))
-                print f
+                print(f)
 
 if __name__ == '__main__':
     main(sys.argv)

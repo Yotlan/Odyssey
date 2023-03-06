@@ -233,8 +233,9 @@ class produceStarJoinOrdering {
     public static HashMap<Integer, Pair<Integer, HashMap<String, Pair<Integer, Integer>>>> readCSS(String fileName) {
         HashMap<Integer, Pair<Integer, HashMap<String, Pair<Integer,Integer>>>> css = null;
         try {
-            ObjectInputStream in = new ObjectInputStream(
-                new BufferedInputStream(new FileInputStream(fileName)));
+            FileInputStream fis = new FileInputStream(fileName);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            ObjectInputStream in = new ObjectInputStream(bis);
 
             css = (HashMap<Integer, Pair<Integer, HashMap<String, Pair<Integer,Integer>>>>) in.readObject();
             in.close();

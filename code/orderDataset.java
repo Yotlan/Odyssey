@@ -35,6 +35,7 @@ class orderDataset {
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileName));
             String l = br.readLine();
+            System.out.println(l);
             while (l!=null) {
                 int i = l.indexOf(" ");
                 String s = l.substring(0, i);

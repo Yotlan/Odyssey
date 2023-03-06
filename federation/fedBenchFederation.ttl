@@ -1,37 +1,82 @@
 @prefix fluid: <http://fluidops.org/config#>.
 
-<http://ChEBI> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST1:PORT1/sparql";
+<http://www.ratingsite0.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://KEGG> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST2:PORT2/sparql";
+<http://www.ratingsite1.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://Drugbank> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST3:PORT3/sparql";
+<http://www.ratingsite2.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://Geonames> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST4:PORT4/sparql";
+<http://www.ratingsite3.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://DBpedia> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST5:PORT5/sparql";
+<http://www.ratingsite4.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://Jamendo> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST6:PORT6/sparql";
+<http://www.ratingsite5.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://NYTimes> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST7:PORT7/sparql";
+<http://www.ratingsite6.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://SWDF> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST8:PORT8/sparql";
+<http://www.ratingsite7.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
 
-<http://LMDB> fluid:store "SPARQLEndpoint";
-fluid:SPARQLEndpoint "http://HOST9:PORT9/sparql";
+<http://www.ratingsite8.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
 fluid:supportsASKQueries "false" .
+
+<http://www.ratingsite9.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor0.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor1.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor2.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor3.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor4.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor5.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor6.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor7.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor8.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+
+<http://www.vendor9.fr/> fluid:store "SPARQLEndpoint";
+fluid:SPARQLEndpoint "http://localhost:32814/sparql";
+fluid:supportsASKQueries "false" .
+

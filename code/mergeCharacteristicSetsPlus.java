@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+@SuppressWarnings({"removal", "deprecated"})
 class mergeCharacteristicSetsPlus {
 
     public static Integer getIKey(String file) {
